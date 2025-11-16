@@ -1,0 +1,25 @@
+﻿# Virtual environment
+venv/
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Data (keep sample_data)
+data/raw/*
+data/processed/*
+!data/sample_data/
+
+# Models & checkpoints
+models/checkpoints/*
+models/*.pth
+models/*.h5
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE + OS
+.vscode/
+.idea/
+.DS_Store
