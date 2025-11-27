@@ -92,6 +92,10 @@ class FloodNetDataset(Dataset):
             image = torch.from_numpy(image.transpose(2, 0, 1)).float() / 255.0
             mask = torch.from_numpy(mask).long()
         
+        if not isinstance(mask, torch.Tensor):
+            mask = torch.from_numpy(mask)
+        mask = mask.long()
+        
         return image, mask
 
 
