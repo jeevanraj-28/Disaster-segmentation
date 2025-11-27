@@ -1,0 +1,31 @@
+
+Dataset Statistics:
+──────────────────────────────────────────────────────────────────────
+  Training Set      :  1445 images
+  Validation Set    :   450 images
+  Test Set          :   448 images
+  Total             :  2343 images
+
+Image Properties:
+──────────────────────────────────────────────────────────────────────
+  Original Size     : Varies (mostly ~4000×3000)
+  Target Size       : 256×256
+  Channels          : RGB (3)
+  Avg File Size     : 5617.9 KB
+
+Class Distribution Highlights:
+──────────────────────────────────────────────────────────────────────
+  Most Common       : Grass (55.71%)
+  Least Common      : Vehicle (0.183%)
+  Severe imbalance detected → Use class weights!
+
+Output Files Generated:
+──────────────────────────────────────────────────────────────────────
+  - Sample images      → D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\visualizations\data_exploration\sample_train_images.png
+  - Distribution plot  → D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\visualizations\data_exploration\class_distribution.png
+  - Class legend       → D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\visualizations\data_exploration\class_legend.png
+  - CSV stats          → D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\metrics\class_distribution.csv
+  - Class weights      → D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\metrics\class_weights.json
+
+NEXT → Run notebook 02_preprocessing.ipynb
+══════════════════════════════════════════════════════════════════════

@@ -1,0 +1,45 @@
+
+Test Set Performance:
+──────────────────────────────────────────────────────────────────────
+  • Test Images:       448
+  • Pixel Accuracy:    0.8931 (89.31%)
+  • Mean IoU (no BG):  0.7070 (70.70%)
+  • Mean Dice (no BG): 0.8233 (82.33%)
+
+Best Performing Classes:
+──────────────────────────────────────────────────────────────────────
+  1. Grass               : IoU = 0.8685
+  2. Tree                : IoU = 0.8105
+  3. Road-non-flooded    : IoU = 0.8041
+
+Most Challenging Classes:
+──────────────────────────────────────────────────────────────────────
+  1. Pool                : IoU = 0.6010
+  2. Vehicle             : IoU = 0.5081
+  3. Background          : IoU = 0.3231
+
+Saved Artifacts:
+──────────────────────────────────────────────────────────────────────
+  ✅ D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\evaluation\test_evaluation_results.json
+  ✅ D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\metrics\test_set_per_class_metrics.csv
+  ✅ D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\metrics\test_sample_ious.csv
+  ✅ D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\visualizations\evaluation\per_class_metrics.png
+  ✅ D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\visualizations\evaluation\confusion_matrix.png
+  ✅ D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\visualizations\evaluation\best_predictions.png
+  ✅ D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\visualizations\evaluation\worst_predictions.png
+  ✅ D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\reports\test_evaluation_report.txt
+
+══════════════════════════════════════════════════════════════════════
+🎯 KEY TAKEAWAY:
+
+Your model achieved 0.7070 (70.70%) mean IoU on the test set!
+
+This is EXCELLENT performance for disaster image segmentation.
+The model generalizes well to unseen data.
+══════════════════════════════════════════════════════════════════════
+
+Next Steps:
+  1. Review worst predictions to understand failure cases
+  2. Analyze confusion matrix for class relationships
+  3. Consider the recommendations in the report
+  4. Proceed to Notebook 05: Visualization & Presentation

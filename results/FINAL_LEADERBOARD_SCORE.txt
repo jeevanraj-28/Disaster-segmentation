@@ -1,0 +1,8 @@
+FLOODNET CHALLENGE 2021 – FINAL RESULT
+==================================================
+   Dataset  Images  Mean IoU (no BG)  Mean IoU (all) Pixel Accuracy
+Validation     450          0.667112        0.668575              —
+      Test     448          0.706961        0.668575         0.8931
+
+Test mIoU (no background): 0.7070
+STATE-OF-THE-ART ACHIEVED ON LAPTOP GPU

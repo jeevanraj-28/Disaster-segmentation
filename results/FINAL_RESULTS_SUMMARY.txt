@@ -1,0 +1,22 @@
+FLOODNET EVALUATION — FINAL RESULTS
+============================================================
+
+Comparison (Validation vs Test)
+   Dataset  Images  Mean IoU (no BG)  Mean IoU (all) Pixel Accuracy
+Validation     450          0.667112        0.668575              —
+      Test     448          0.706961        0.668575         0.8931
+
+Summary
+------------------------------------------------------------
+Model: U-Net + resnet34
+Checkpoint: unet_resnet34_best.pth
+Validation mIoU (no BG): 0.6671
+Test mIoU (no BG):       0.7070
+Pixel Accuracy:          0.8931
+
+Recommendations:
+ - Inspect worst predictions and confusion pairs to identify
+   systematic failure modes (e.g., similar textures or label noise).
+ - Consider targeted augmentations or class-weight adjustments
+   for classes with low IoU/Dice.
+ - Verify label quality on high-confusion samples before retraining.

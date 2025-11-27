@@ -1,0 +1,110 @@
+
+======================================================================
+FLOODNET MODEL EVALUATION REPORT
+======================================================================
+
+Date: 2025-11-27 18:57:25
+Model: U-Net with resnet34 encoder
+Test Set: 448 images
+
+======================================================================
+OVERALL PERFORMANCE
+======================================================================
+
+Pixel Accuracy:        0.8931 (89.31%)
+Mean IoU (all classes): 0.6686
+Mean IoU (no BG):      0.7070
+Mean Dice (all classes): 0.7898
+Mean Dice (no BG):     0.8233
+
+======================================================================
+PER-CLASS PERFORMANCE (sorted by IoU)
+======================================================================
+
+
+Grass                    :
+  IoU:       0.8685 | Dice:      0.9296
+  Precision: 0.9379 | Recall:    0.9215
+  F1 Score:  0.9296
+
+Tree                     :
+  IoU:       0.8105 | Dice:      0.8954
+  Precision: 0.8812 | Recall:    0.9100
+  F1 Score:  0.8954
+
+Road-non-flooded         :
+  IoU:       0.8041 | Dice:      0.8914
+  Precision: 0.9082 | Recall:    0.8752
+  F1 Score:  0.8914
+
+Building-non-flooded     :
+  IoU:       0.7509 | Dice:      0.8577
+  Precision: 0.8330 | Recall:    0.8840
+  F1 Score:  0.8577
+
+Water                    :
+  IoU:       0.7260 | Dice:      0.8413
+  Precision: 0.8655 | Recall:    0.8183
+  F1 Score:  0.8413
+
+Building-flooded         :
+  IoU:       0.6859 | Dice:      0.8137
+  Precision: 0.7541 | Recall:    0.8835
+  F1 Score:  0.8137
+
+Road-flooded             :
+  IoU:       0.6076 | Dice:      0.7559
+  Precision: 0.6452 | Recall:    0.9124
+  F1 Score:  0.7559
+
+Pool                     :
+  IoU:       0.6010 | Dice:      0.7508
+  Precision: 0.7116 | Recall:    0.7946
+  F1 Score:  0.7508
+
+Vehicle                  :
+  IoU:       0.5081 | Dice:      0.6738
+  Precision: 0.6110 | Recall:    0.7510
+  F1 Score:  0.6738
+
+Background               :
+  IoU:       0.3231 | Dice:      0.4884
+  Precision: 0.5235 | Recall:    0.4577
+  F1 Score:  0.4884
+
+======================================================================
+TOP 5 CONFUSED CLASS PAIRS
+======================================================================
+
+1. Grass                → Tree                :   545788 pixels
+2. Tree                 → Grass               :   338495 pixels
+3. Water                → Grass               :   267770 pixels
+4. Grass                → Water               :   253641 pixels
+5. Road-non-flooded     → Grass               :   168110 pixels
+
+======================================================================
+KEY INSIGHTS
+======================================================================
+
+Best Performing Classes:
+  1. Grass                (IoU: 0.8685)
+  2. Tree                 (IoU: 0.8105)
+  3. Road-non-flooded     (IoU: 0.8041)
+
+Challenging Classes:
+  1. Pool                 (IoU: 0.6010)
+  2. Vehicle              (IoU: 0.5081)
+  3. Background           (IoU: 0.3231)
+
+======================================================================
+RECOMMENDATIONS
+======================================================================
+
+1. Focus on improving rare class detection (Vehicle, Pool)
+2. Address confusion between similar classes (see confusion pairs)
+3. Consider class-specific augmentation strategies
+4. Analyze failure cases for model refinement
+
+======================================================================
+END OF REPORT
+======================================================================
