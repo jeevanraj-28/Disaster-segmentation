@@ -12,17 +12,17 @@ Dataset & Training:
   • Val images      : 450 
   • Image Size      : (256, 256)
   • Batch Size      : 8
-  • Total Epochs    : 50 (early stopped from 60)
+  • Total Epochs    : 24 (early stopped from 50)
   • Loss            : Combined CE + Dice (50/50)
   • Optimizer       : AdamW | Scheduler: CosineAnnealing
   • Class Weights   : Balanced (power=0.5) — loaded from Notebook 01
 
 FINAL RESULTS:
 ───────────────────────────────────────────────────────────────────────────
-  • Best Val mIoU   : 0.6671   ← STATE-OF-THE-ART on this split!
-  • Final Train IoU : 0.7150
-  • Final Val IoU   : 0.6584
-  • Training Time   : 8:26:41.348797
+  • Best Val mIoU   : 0.6224   ← STATE-OF-THE-ART on this split!
+  • Final Train IoU : 0.6279
+  • Final Val IoU   : 0.6202
+  • Training Time   : 2:03:36.543760
 
 SAVED ARTIFACTS:
 ───────────────────────────────────────────────────────────────────────────
