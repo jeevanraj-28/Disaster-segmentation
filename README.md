@@ -1,147 +1,162 @@
-Image Segmentation for Disaster Resilience
+# Disaster Segmentation
 
-A deep-learning system for segmenting flooded and non-flooded regions in aerial imagery.
+<p>
+  <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/PyTorch-Semantic%20Segmentation-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white" />
+  <img src="https://img.shields.io/badge/Dataset-FloodNet-2563EB?style=for-the-badge" />
+  <img src="https://img.shields.io/github/license/jeevanraj-28/Disaster-segmentation?style=for-the-badge" />
+  <img src="https://img.shields.io/github/last-commit/jeevanraj-28/Disaster-segmentation?style=for-the-badge" />
+</p>
 
-------------------------------------------------------------------------
-Overview
+Deep learning semantic segmentation system for identifying disaster-affected regions from satellite and aerial imagery. The project uses a **U-Net decoder with a ResNet34 encoder** to support rapid damage assessment after floods and natural disasters.
 
-This project develops a semantic segmentation model that identifies key elements in disaster-affected regions using the FloodNet dataset.
-The model uses a U-Net architecture with a ResNet34 encoder, trained to classify each pixel into multiple scene classes such as water, flooded roads, flooded buildings, vegetation, and more.
+## Problem Statement
 
-The work includes dataset processing, model training, evaluation, visualization, and a structured final report.
+During floods and large-scale disasters, response teams need fast, visual understanding of affected regions. Manual inspection of aerial imagery is slow and difficult to scale.
 
-------------------------------------------------------------------------
-Key Results
+This project uses semantic segmentation to classify each pixel in disaster imagery, helping identify regions such as flooded areas, damaged infrastructure, roads, buildings, and background terrain.
 
-| Metric                       | Score         |
-| ---------------------------- | ------------- |
-| **Mean IoU (no background)** | 70.70%        |
-| **Pixel Accuracy**           | 89.31%        |
-| **Mean Dice Coefficient**    | 82.33%        |
-| **Validation IoU**           | 66.71%        |
-| **Inference Speed**          | ~50 FPS (GPU) |
+## Real-World Motivation
 
-These results place the model above commonly reported benchmarks for FloodNet using comparable architectures.
+Accurate segmentation of disaster-affected zones can help:
 
-------------------------------------------------------------------------
-Repository Structure
+- prioritize rescue and relief operations
+- identify inaccessible roads and damaged infrastructure
+- estimate affected residential and urban regions
+- support emergency response dashboards with visual AI outputs
 
-Disaster-segmentation/
-├── data/                       # Dataset (not included in Git)
-│   └── raw/FloodNet/
-├── notebooks/                  # Notebook workflow pipeline
-│   ├── 01_clean_preprocess_floodnet.ipynb
-│   ├── 02_preprocessing.ipynb
-│   ├── 03_train_unet_basic.ipynb
-│   ├── 04_evaluation.ipynb
-│   ├── 05_visualization.ipynb
-│   └── 06_final_report.ipynb
-├── src/                        # Source code modules
-│   ├── data/                   # Datasets & augmentation
-│   ├── training/               # Loss, metrics, engines
-│   └── utils/                  # Helper utilities
-├── models/checkpoints/         # Trained model weights
-├── results/
-│   ├── evaluation/             # Metric outputs (JSON, CSV)
-│   ├── metrics/                # Per-class metrics
-│   ├── viz/                    # Visualizations (PNG)
-│   └── reports/                # Final report (Markdown)
-└── README.md
+## Dataset: FloodNet
 
-------------------------------------------------------------------------
-Getting Started
-1. Clone the Repository
-git clone https://github.com/jeevanraj-28/Disaster-segmentation
+FloodNet is a disaster-scene understanding dataset built from UAV imagery captured after flood events.
+
+Dataset details to document after final preprocessing:
+
+| Item | Details |
+|---|---|
+| Dataset | FloodNet |
+| Task | Semantic segmentation |
+| Image type | UAV/aerial disaster imagery |
+| Input format | RGB images |
+| Label format | Pixel-level segmentation masks |
+| Classes | Background, building-flooded, building-non-flooded, road-flooded, road-non-flooded, water, tree, vehicle, pool, grass |
+| Image count | Add exact count from local FloodNet split |
+| Train/Val/Test split | Add final split ratio from preprocessing notebook |
+
+## Model Architecture
+
+The segmentation pipeline is implemented in PyTorch using a U-Net style architecture with a pretrained ResNet34 encoder.
+
+```text
+Input RGB Image
+      |
+      v
+Image Preprocessing
+Resize, normalize, augment
+      |
+      v
+PyTorch Dataset + DataLoader
+      |
+      v
+U-Net + ResNet34 Segmentation Model
+Encoder extracts spatial features
+Decoder upsamples with skip connections
+      |
+      v
+Per-pixel Class Prediction
+      |
+      v
+Segmentation Mask Overlay
+```
+
+Current baseline:
+
+- **Encoder:** ResNet34 pretrained on ImageNet
+- **Decoder:** U-Net with skip connections
+- **Parameters:** approximately 24M
+- **Output:** 256x256 multi-class segmentation mask
+
+Recommended future model comparisons:
+
+- **U-Net:** strong and simple segmentation baseline
+- **DeepLabV3+:** better multi-scale context for aerial imagery
+- **SegFormer:** transformer-based model for improved boundary understanding
+
+## Training Details
+
+Update this section after training:
+
+| Setting | Value |
+|---|---|
+| Model | U-Net with ResNet34 encoder |
+| Framework | PyTorch |
+| Epochs | TBD |
+| Batch size | TBD |
+| Optimizer | Adam / AdamW |
+| Learning rate | TBD |
+| Loss function | CrossEntropy + Dice loss |
+| Scheduler | Cosine annealing learning rate |
+| Augmentations | Random flips, brightness/contrast changes, Gaussian noise |
+| Hardware | GPU recommended |
+
+## Results
+
+Current reported results:
+
+| Metric | Score |
+|---|---:|
+| Mean IoU without background | 70.70% |
+| Pixel Accuracy | 89.31% |
+| Mean Dice Coefficient | 82.33% |
+| Validation IoU | 66.71% |
+| Inference Speed | approximately 50 FPS on GPU |
+
+## Visual Outputs
+
+Recommended visual comparison format:
+
+```text
+Original Image | Ground Truth Mask | Predicted Mask | Overlay
+```
+
+Add sample images here:
+
+```text
+assets/results/sample_01.png
+assets/results/sample_02.png
+assets/results/sample_03.png
+```
+
+## Run Locally
+
+```bash
+git clone https://github.com/jeevanraj-28/Disaster-segmentation.git
 cd Disaster-segmentation
-
-2. Install Required Packages
+python -m venv .venv
+.venv\Scripts\activate
 pip install -r requirements.txt
+python train.py --config configs/unet_floodnet.yaml
+python evaluate.py --checkpoint checkpoints/best_model.pth
+python predict.py --image samples/test_image.png --checkpoint checkpoints/best_model.pth
+```
 
-3. Download FloodNet Dataset
+For macOS/Linux:
 
-Place the dataset under:
+```bash
+source .venv/bin/activate
+```
 
-data/raw/FloodNet/
+## Future Work
 
+- Train and compare U-Net, DeepLabV3+, and SegFormer.
+- Add class imbalance handling with Dice/Focal loss.
+- Improve small-object segmentation for vehicles and narrow roads.
+- Add a Streamlit or Gradio demo for uploading disaster images.
+- Deploy inference as a FastAPI endpoint.
+- Add Grad-CAM or attention visualization for interpretability.
 
-(The dataset is not included in the repository due to size.)
+## Author
 
-------------------------------------------------------------------------
-Running the Workflow
+**Jeevan Raj M**  
+AI/ML Engineer | Computer Vision | Disaster AI  
 
-The project is designed to be reproducible through a series of notebooks:
-
-1. Data Cleaning & Preprocessing
-
-Mask resizing
-Pixel normalization
-Class distribution extraction
-
-2. Augmentation & Dataset Loader
-
-Random flips, brightness/contrast changes, Gaussian noise
-Balanced sampling
-
-3. Model Training
-U-Net + ResNet34 backbone
-CE + Dice loss
-Cosine Annealing LR
-Checkpoint saving
-4. Evaluation
-Mean IoU
-Per-class IoU, Dice, Precision, Recall
-Confusion matrix
-5. Visualization
-Best/worst predictions
-Overlay maps
-Class-level metrics
-6. Final Report Generation
-
-------------------------------------------------------------------------
-Model Architecture
-
-Encoder: ResNet34 pretrained on ImageNet
-Decoder: U-Net with skip connections
-Total parameters: ~24M
-Output: 256×256 multi-class segmentation mask
-
-The choice of ResNet34 provides an efficient trade-off between speed and accuracy, making the model suitable for real-time or near-real-time use.
-
-------------------------------------------------------------------------
-
-Visualizations Included in This Project
-
-You will find the following in(results/visualizations):
-
-Best predicted samples
-
-Worst predicted samples (error analysis)
-
-Per-class IoU bar chart
-
-Confusion matrix
-
-Side-by-side image–mask–prediction comparisons
-
-These help diagnose model behavior and understand class-level performance.
-
-------------------------------------------------------------------------
-Reproduction Checklist
-
-If you want to fully reproduce the results:
-
-1. Download FloodNet
-2. Run notebooks in order
-3. Check generated logs in logs/
-4. Review saved results under results/
-
-------------------------------------------------------------------------
-Acknowledgments
-
-FloodNet Dataset (Rahnemoonfar et al.)
-
-PyTorch & Torchvision teams
-
-Segmentation Models PyTorch (Pavel Iakubovskii)
-
-Open-source community for tools and inspiration
+[LinkedIn](https://linkedin.com/in/jeevan-raj-m-5ba64a383) | [GitHub](https://github.com/jeevanraj-28) | [Email](mailto:jeevanrajm2882004@gmail.com)
