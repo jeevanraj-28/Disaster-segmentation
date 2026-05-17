@@ -4,126 +4,109 @@
   <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" />
   <img src="https://img.shields.io/badge/PyTorch-Semantic%20Segmentation-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white" />
   <img src="https://img.shields.io/badge/Dataset-FloodNet-2563EB?style=for-the-badge" />
-  <img src="https://img.shields.io/github/license/jeevanraj-28/Disaster-segmentation?style=for-the-badge" />
   <img src="https://img.shields.io/github/last-commit/jeevanraj-28/Disaster-segmentation?style=for-the-badge" />
 </p>
 
-Deep learning semantic segmentation system for identifying disaster-affected regions from satellite and aerial imagery. The project uses a **U-Net decoder with a ResNet34 encoder** to support rapid damage assessment after floods and natural disasters.
+Deep learning semantic segmentation for disaster-response imagery. This project segments flood-affected UAV/aerial images into pixel-level scene classes so emergency teams can quickly inspect water, roads, buildings, vegetation, and damaged regions.
 
-## Problem Statement
-
-During floods and large-scale disasters, response teams need fast, visual understanding of affected regions. Manual inspection of aerial imagery is slow and difficult to scale.
-
-This project uses semantic segmentation to classify each pixel in disaster imagery, helping identify regions such as flooded areas, damaged infrastructure, roads, buildings, and background terrain.
-
-## Real-World Motivation
-
-Accurate segmentation of disaster-affected zones can help:
-
-- prioritize rescue and relief operations
-- identify inaccessible roads and damaged infrastructure
-- estimate affected residential and urban regions
-- support emergency response dashboards with visual AI outputs
-
-## Dataset: FloodNet
-
-FloodNet is a disaster-scene understanding dataset built from UAV imagery captured after flood events.
-
-Dataset details to document after final preprocessing:
-
-| Item | Details |
-|---|---|
-| Dataset | FloodNet |
-| Task | Semantic segmentation |
-| Image type | UAV/aerial disaster imagery |
-| Input format | RGB images |
-| Label format | Pixel-level segmentation masks |
-| Classes | Background, building-flooded, building-non-flooded, road-flooded, road-non-flooded, water, tree, vehicle, pool, grass |
-| Image count | Add exact count from local FloodNet split |
-| Train/Val/Test split | Add final split ratio from preprocessing notebook |
-
-## Model Architecture
-
-The segmentation pipeline is implemented in PyTorch using a U-Net style architecture with a pretrained ResNet34 encoder.
-
-```text
-Input RGB Image
-      |
-      v
-Image Preprocessing
-Resize, normalize, augment
-      |
-      v
-PyTorch Dataset + DataLoader
-      |
-      v
-U-Net + ResNet34 Segmentation Model
-Encoder extracts spatial features
-Decoder upsamples with skip connections
-      |
-      v
-Per-pixel Class Prediction
-      |
-      v
-Segmentation Mask Overlay
-```
-
-Current baseline:
-
-- **Encoder:** ResNet34 pretrained on ImageNet
-- **Decoder:** U-Net with skip connections
-- **Parameters:** approximately 24M
-- **Output:** 256x256 multi-class segmentation mask
-
-Recommended future model comparisons:
-
-- **U-Net:** strong and simple segmentation baseline
-- **DeepLabV3+:** better multi-scale context for aerial imagery
-- **SegFormer:** transformer-based model for improved boundary understanding
-
-## Training Details
-
-Update this section after training:
-
-| Setting | Value |
-|---|---|
-| Model | U-Net with ResNet34 encoder |
-| Framework | PyTorch |
-| Epochs | TBD |
-| Batch size | TBD |
-| Optimizer | Adam / AdamW |
-| Learning rate | TBD |
-| Loss function | CrossEntropy + Dice loss |
-| Scheduler | Cosine annealing learning rate |
-| Augmentations | Random flips, brightness/contrast changes, Gaussian noise |
-| Hardware | GPU recommended |
-
-## Results
-
-Current reported results:
+## Results at a Glance
 
 | Metric | Score |
 |---|---:|
-| Mean IoU without background | 70.70% |
-| Pixel Accuracy | 89.31% |
-| Mean Dice Coefficient | 82.33% |
-| Validation IoU | 66.71% |
-| Inference Speed | approximately 50 FPS on GPU |
+| Test Mean IoU, no background | **70.70%** |
+| Validation Mean IoU, no background | **66.71%** |
+| Pixel Accuracy | **89.31%** |
+| Mean Dice Coefficient | **82.33%** |
+| Test Images | **448** |
+| Validation Images | **450** |
 
-## Visual Outputs
+Model checkpoint: `unet_resnet34_best.pth`
 
-Recommended visual comparison format:
+## Visual Results
+
+| Output | Preview |
+|---|---|
+| Best predictions | ![Best predictions](results/visualizations/evaluation/best_predictions.png) |
+| Validation predictions | ![Validation predictions](results/visualizations/predictions/val_predictions.png) |
+| Per-class metrics | ![Per-class metrics](results/visualizations/evaluation/per_class_metrics.png) |
+| Confusion matrix | ![Confusion matrix](results/visualizations/evaluation/confusion_matrix.png) |
+| Training curves | ![Training curves](results/visualizations/training/training_curves.png) |
+
+## Problem Statement
+
+After floods and natural disasters, responders need fast visibility into affected areas. Manual interpretation of aerial imagery is slow, subjective, and difficult to scale across large regions.
+
+This project uses semantic segmentation to classify each pixel in FloodNet imagery, enabling structured damage assessment from visual data.
+
+## Dataset
+
+Dataset: **FloodNet**
+
+| Item | Details |
+|---|---|
+| Task | Semantic segmentation |
+| Image type | UAV/aerial flood imagery |
+| Input size | 256 x 256 |
+| Train images | 1,445 |
+| Validation images | 450 |
+| Test images | 448 |
+| Classes | Background, flooded building, non-flooded building, flooded road, non-flooded road, water, tree, vehicle, pool, grass |
+
+## Model Architecture
+
+The final model uses a U-Net segmentation architecture with an ImageNet-pretrained ResNet34 encoder.
 
 ```text
-Original Image | Ground Truth Mask | Predicted Mask | Overlay
+RGB Flood Image
+      |
+      v
+Preprocessing + Augmentation
+      |
+      v
+U-Net Decoder + ResNet34 Encoder
+      |
+      v
+Pixel-level Class Mask
+      |
+      v
+Overlay + Metrics + Error Analysis
 ```
 
-Add sample images here:
+| Component | Value |
+|---|---|
+| Model | U-Net |
+| Encoder | ResNet34 |
+| Pretraining | ImageNet |
+| Trainable parameters | 24,437,674 |
+| Loss | 50% Cross-Entropy + 50% Dice |
+| Optimizer | AdamW |
+| Scheduler | Cosine Annealing |
+| Batch size | 8 |
+| Epochs | 24, early stopped from 50 |
+| Augmentations | Flips, brightness/contrast changes, Gaussian noise |
+
+## Repository Structure
 
 ```text
-assets/results/sample_01.png
-assets/results/sample_02.png
-assets/results/sample_03.png
+Disaster-segmentation/
+|-- configs/                 # Training and production configs
+|-- data/                    # FloodNet sample/raw structure
+|-- notebooks/               # End-to-end workflow notebooks
+|-- results/
+|   |-- evaluation/           # Evaluation outputs
+|   |-- metrics/              # Per-class metrics and class weights
+|   |-- reports/              # Text reports
+|   `-- visualizations/       # Training, prediction, and evaluation plots
+|-- src/
+|   |-- data/                 # Dataset, dataloader, preprocessing
+|   |-- evaluation/           # Metrics and visualization
+|   |-- inference/            # Prediction scripts
+|   |-- models/               # U-Net, ResUNet, Attention U-Net
+|   |-- training/             # Losses, metrics, training loop
+|   `-- utils/                # Config, logging, helpers
+|-- tests/                    # Project checks
+|-- README.md
+`-- REPORT.md
 ```
 
 ## Run Locally
@@ -134,9 +117,18 @@ cd Disaster-segmentation
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
-python train.py --config configs/unet_floodnet.yaml
-python evaluate.py --checkpoint checkpoints/best_model.pth
-python predict.py --image samples/test_image.png --checkpoint checkpoints/best_model.pth
+```
+
+Run training or evaluation from the provided notebooks:
+
+```text
+notebooks/01_clean_preprocess_floodnet.ipynb
+notebooks/02_preprocessing.ipynb
+notebooks/03_train_unet_basic.ipynb
+notebooks/04_evaluation.ipynb
+notebooks/05_visualization.ipynb
+notebooks/07_test_inference.ipynb
+notebooks/08_final_report.ipynb
 ```
 
 For macOS/Linux:
@@ -145,14 +137,25 @@ For macOS/Linux:
 source .venv/bin/activate
 ```
 
+## Key Reports
+
+- [Final results summary](results/FINAL_RESULTS_SUMMARY.txt)
+- [Training summary](results/FINAL_TRAINING_SUMMARY.txt)
+- [Leaderboard score](results/FINAL_LEADERBOARD_SCORE.txt)
+- [Test evaluation report](results/reports/test_evaluation_report.txt)
+- [Research report outline](REPORT.md)
+
+## Why This Project Matters
+
+This is not a tutorial segmentation repo. It includes an end-to-end disaster AI workflow: preprocessing, augmentation, model training, evaluation, per-class analysis, visual diagnostics, and final reporting. The project demonstrates practical computer vision engineering for a real emergency-response use case.
+
 ## Future Work
 
-- Train and compare U-Net, DeepLabV3+, and SegFormer.
-- Add class imbalance handling with Dice/Focal loss.
-- Improve small-object segmentation for vehicles and narrow roads.
-- Add a Streamlit or Gradio demo for uploading disaster images.
-- Deploy inference as a FastAPI endpoint.
-- Add Grad-CAM or attention visualization for interpretability.
+- Add a Streamlit demo for uploading flood imagery and viewing masks.
+- Compare U-Net, DeepLabV3+, SegFormer, and Mask2Former.
+- Add class-specific error analysis for roads, vehicles, and flooded buildings.
+- Add ONNX export for faster inference.
+- Package inference behind a FastAPI endpoint.
 
 ## Author
 
