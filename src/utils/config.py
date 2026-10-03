@@ -10,8 +10,8 @@ class Config:
     """Central configuration for the project"""
     
     # ==================== PATHS ====================
-    # Base directory (adjust if needed)
-    BASE_DIR = Path(r"D:\Projects\Image Segmentation for Disaster Resilience\Disaster-segmentation")
+    # Repository root (two levels above this file), so paths work on any machine
+    BASE_DIR = Path(__file__).resolve().parents[2]
     
     # Data paths
     DATA_DIR = BASE_DIR / "data"
@@ -45,8 +45,9 @@ class Config:
     
     # ==================== TRAINING PARAMETERS ====================
     BATCH_SIZE = 8  # Reduce if GPU memory issues
-    EPOCHS = 50
-    LEARNING_RATE = 1e-4
+    EPOCHS = 60
+    PATIENCE = 12  # early stopping: epochs without validation improvement
+    LEARNING_RATE = 3e-4
     WEIGHT_DECAY = 1e-4
     
     # ==================== DATA SPLIT ====================

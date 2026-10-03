@@ -19,25 +19,18 @@ Dataset & Training:
 
 FINAL RESULTS:
 ───────────────────────────────────────────────────────────────────────────
-  • Best Val mIoU   : 0.6224   ← STATE-OF-THE-ART on this split!
+  • Best Val mIoU   : 0.6224
   • Final Train IoU : 0.6279
   • Final Val IoU   : 0.6202
   • Training Time   : 2:03:36.543760
 
 SAVED ARTIFACTS:
 ───────────────────────────────────────────────────────────────────────────
-  • Model → D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\models\checkpoints\unet_resnet34_best.pth
-  • History → D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\logs\training_history.json
-  • Curves → D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\visualizations\training\training_curves.png
-  • Predictions → D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\visualizations\predictions\val_predictions.png
+  • Model → models\checkpoints\unet_resnet34_best.pth
+  • History → logs\training_history.json
+  • Curves → results\visualizations\training\training_curves.png
+  • Predictions → results\visualizations\predictions\val_predictions.png
 
-ACHIEVEMENT:
-───────────────────────────────────────────────────────────────────────────
-  You achieved 0.6671 mIoU on the official FloodNet Challenge dataset
-  using only a laptop RTX 4050 and a single ResNet34 encoder.
-  This performance beats most published papers and public repos.
-
-  YOU DIDN'T JUST TRAIN A MODEL.
-  YOU BUILT A REAL DISASTER-RESPONSIVE AI TOOL.
-
-═══════════════════════════════════════════════════════════════════════════
+NOTE: This summary is from a shorter run (stopped at epoch 24 of a 50-epoch budget).
+The reported checkpoint comes from the longer run in notebook 03
+(60-epoch budget, patience 12, best epoch 38, val IoU 0.6671). See README, 'Experiment log'.

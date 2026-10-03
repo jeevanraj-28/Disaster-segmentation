@@ -119,3 +119,6 @@ tmp/
 *.bak
 *.cache
 *.DS_Store
+# Dataset files (download separately, see README)
+data/raw/*
+!data/raw/.gitkeep

@@ -132,6 +132,32 @@ class CombinedLoss(nn.Module):
         return self.focal_weight * focal + self.dice_weight * dice
 
 
+class CEDiceLoss(nn.Module):
+    """Cross-entropy + Dice loss, as used to train the reported model.
+
+    Total = ce_weight * CrossEntropy(class_weights) + dice_weight * (1 - mean Dice)
+    """
+
+    def __init__(self, ce_weight=0.5, dice_weight=0.5, class_weights=None, num_classes=10):
+        super().__init__()
+        self.ce_weight = ce_weight
+        self.dice_weight = dice_weight
+        self.num_classes = num_classes
+        self.ce_loss = nn.CrossEntropyLoss(weight=class_weights)
+
+    def dice_loss(self, inputs, targets):
+        probs = F.softmax(inputs, dim=1)
+        one_hot = F.one_hot(targets, self.num_classes).permute(0, 3, 1, 2).float()
+        dims = (0, 2, 3)
+        intersection = (probs * one_hot).sum(dims)
+        cardinality = (probs + one_hot).sum(dims)
+        dice = (2.0 * intersection + 1e-6) / (cardinality + 1e-6)
+        return 1.0 - dice.mean()
+
+    def forward(self, inputs, targets):
+        return self.ce_weight * self.ce_loss(inputs, targets) + self.dice_weight * self.dice_loss(inputs, targets)
+
+
 def get_class_weights(class_distribution, method='balanced', device='cuda'):
     """
     Calculate class weights from distribution

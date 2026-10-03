@@ -23,14 +23,14 @@ Most Challenging Classes:
 
 Saved Artifacts:
 ──────────────────────────────────────────────────────────────────────
-  - D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\evaluation\test_evaluation_results.json
-  - D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\metrics\test_set_per_class_metrics.csv
-  - D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\metrics\test_sample_ious.csv
-  - D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\visualizations\evaluation\per_class_metrics.png
-  - D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\visualizations\evaluation\confusion_matrix.png
-  - D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\visualizations\evaluation\best_predictions.png
-  - D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\visualizations\evaluation\worst_predictions.png
-  - D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\reports\test_evaluation_report.txt
+  - results\evaluation\test_evaluation_results.json
+  - results\metrics\test_set_per_class_metrics.csv
+  - results\metrics\test_sample_ious.csv
+  - results\visualizations\evaluation\per_class_metrics.png
+  - results\visualizations\evaluation\confusion_matrix.png
+  - results\visualizations\evaluation\best_predictions.png
+  - results\visualizations\evaluation\worst_predictions.png
+  - results\reports\test_evaluation_report.txt
 
 KEY TAKEAWAY:
 ══════════════════════════════════════════════════════════════════════

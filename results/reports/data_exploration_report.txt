@@ -21,11 +21,11 @@ Class Distribution Highlights:
 
 Output Files Generated:
 ──────────────────────────────────────────────────────────────────────
-  - Sample images      → D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\visualizations\data_exploration\sample_train_images.png
-  - Distribution plot  → D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\visualizations\data_exploration\class_distribution.png
-  - Class legend       → D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\visualizations\data_exploration\class_legend.png
-  - CSV stats          → D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\metrics\class_distribution.csv
-  - Class weights      → D:\Projects\Image_Segmentation_for_Disaster_Resilience\Disaster-segmentation\results\metrics\class_weights.json
+  - Sample images      → results\visualizations\data_exploration\sample_train_images.png
+  - Distribution plot  → results\visualizations\data_exploration\class_distribution.png
+  - Class legend       → results\visualizations\data_exploration\class_legend.png
+  - CSV stats          → results\metrics\class_distribution.csv
+  - Class weights      → results\metrics\class_weights.json
 
 NEXT → Run notebook 02_preprocessing.ipynb
 ══════════════════════════════════════════════════════════════════════
