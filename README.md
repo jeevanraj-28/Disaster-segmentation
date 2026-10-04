@@ -6,6 +6,8 @@ Pixel-level semantic segmentation of post-flood drone imagery (FloodNet) into 10
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.0-EE4C2C?logo=pytorch&logoColor=white)
 ![Dataset](https://img.shields.io/badge/Dataset-FloodNet-2563EB)
 ![Model](https://img.shields.io/badge/Model-U--Net%20%2B%20ResNet34-111827)
+[![tests](https://github.com/jeevanraj-28/Disaster-segmentation/actions/workflows/tests.yml/badge.svg)](https://github.com/jeevanraj-28/Disaster-segmentation/actions/workflows/tests.yml)
+![License](https://img.shields.io/badge/License-MIT-22c55e)
 
 **Test set (448 held-out images): 70.7% mean IoU excluding background, 89.3% pixel accuracy.**
 
@@ -104,11 +106,11 @@ Label images are single-channel PNGs where each pixel value is a class index fro
 
 ## Train, evaluate, predict
 
-**Train** (script version of notebook 03; defaults are the settings of the reported run):
+**Train** (script version of notebook 03). All settings of the reported run are in [`configs/unet_resnet34.yaml`](configs/unet_resnet34.yaml); any command-line flag overrides them:
 
 ```bash
-python -m src.training.train                         # full run: up to 60 epochs, early stopping after 12 without improvement
-python -m src.training.train --epochs 1 --limit 32   # quick check that everything works
+python -m src.training.train --config configs/unet_resnet34.yaml   # settings of the reported run (up to 60 epochs, patience 12)
+python -m src.training.train --epochs 1 --limit 32                 # quick check that everything works
 ```
 
 The best checkpoint (by validation IoU) is saved to `models/checkpoints/unet_resnet34_best.pth`, and the per-epoch history to `logs/training_history.json`.
@@ -199,8 +201,7 @@ Disaster-segmentation/
 │   ├── 03_train_unet_basic.ipynb            # training (run A log)
 │   ├── 04_evaluation.ipynb                  # test evaluation, per-class metrics, confusion
 │   ├── 05_visualization.ipynb               # figures
-│   ├── 07_test_inference.ipynb              # test-time augmentation experiments
-│   └── 08_final_report.ipynb
+│   └── 07_test_inference.ipynb              # test-time augmentation experiments
 ├── src/                       # The same pipeline as importable code and scripts
 │   ├── data/dataset.py        # FloodNet Dataset + augmentations
 │   ├── models/model_builder.py  # U-Net builder + checkpoint loader
@@ -211,11 +212,12 @@ Disaster-segmentation/
 │   ├── evaluation/report.py   # metrics + Markdown report (NumPy only)
 │   ├── inference/predict.py   # masks and overlays for new images
 │   └── utils/config.py        # paths and hyperparameters
-├── configs/                   # YAML configs
+├── configs/unet_resnet34.yaml # settings of the reported run
 ├── results/                   # reports, confusion matrix, class weights, figures
 ├── tests/test_metrics.py      # metric tests + reproduces the saved report
 ├── REPORT.md                  # technical write-up
-└── requirements.txt
+├── requirements.txt           # direct dependencies, pinned
+└── LICENSE                    # MIT
 ```
 
 ---
@@ -237,4 +239,4 @@ Disaster-segmentation/
 
 **Jeevan Raj M** · [LinkedIn](https://linkedin.com/in/jeevan-raj-m-5ba64a383) · [GitHub](https://github.com/jeevanraj-28) · [Portfolio](https://jeevanraj-28.github.io)
 
-Dataset: FloodNet, Rahnemoonfar et al., *FloodNet: A High Resolution Aerial Imagery Dataset for Post Flood Scene Understanding*, IEEE Access, 2021.
+Code licensed under the [MIT License](LICENSE). Dataset: FloodNet, Rahnemoonfar et al., *FloodNet: A High Resolution Aerial Imagery Dataset for Post Flood Scene Understanding*, IEEE Access, 2021.

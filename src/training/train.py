@@ -1,7 +1,7 @@
 """Train U-Net (ResNet34 encoder) on FloodNet. Script version of notebook 03.
 
-    python -m src.training.train                       # full training, settings of the reported run
-    python -m src.training.train --epochs 1 --limit 32 # 2-minute smoke test
+    python -m src.training.train --config configs/unet_resnet34.yaml   # settings of the reported run
+    python -m src.training.train --epochs 1 --limit 32                 # 2-minute smoke test
 
 Saves the best checkpoint (by validation IoU) to models/checkpoints/ and the
 per-epoch history to logs/training_history.json.
@@ -92,6 +92,19 @@ def main() -> None:
     parser.add_argument("--no-class-weights", action="store_true")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--out", type=Path, default=Config.CHECKPOINTS_DIR / "unet_resnet34_best.pth")
+    parser.add_argument("--config", type=Path, default=None,
+                        help="YAML file with default values for the options above; flags still override it")
+    known, _ = parser.parse_known_args()
+    if known.config:
+        import yaml
+        values = yaml.safe_load(known.config.read_text()) or {}
+        unknown = set(values) - {a.dest for a in parser._actions}
+        if unknown:
+            raise SystemExit(f"Unknown keys in {known.config}: {sorted(unknown)}")
+        for key in ("data_dir", "out"):
+            if key in values:
+                values[key] = Path(values[key])
+        parser.set_defaults(**values)
     args = parser.parse_args()
 
     set_seed(args.seed)
