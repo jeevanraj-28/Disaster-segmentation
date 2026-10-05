@@ -1,0 +1,21 @@
+# Settings of the reported run (run A in the README).
+# Used as defaults by:  python -m src.training.train --config configs/unet_resnet34.yaml
+# Any command-line flag overrides the value here.
+
+data_dir: data/raw/FloodNet
+img_size: 256            # images and masks are resized to img_size x img_size
+
+# Optimisation
+epochs: 60               # maximum; early stopping usually ends training sooner
+patience: 12             # stop after this many epochs without validation improvement
+batch_size: 8
+lr: 0.0003
+weight_decay: 0.0001
+seed: 42
+workers: 0               # 0 is safest on Windows
+
+# Loss: 0.5 x weighted cross-entropy + 0.5 x Dice.
+# Class weights come from results/metrics/class_weights.json (balanced, power 0.5).
+no_class_weights: false
+
+out: models/checkpoints/unet_resnet34_best.pth

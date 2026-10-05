@@ -1,189 +1,98 @@
-# Disaster Segmentation for Emergency Response — Technical Report
+# Flood Damage Segmentation on FloodNet: Technical Report
+
+**Jeevan Raj M** · B.E. Artificial Intelligence & Data Science, University of Mysore School of Engineering · 2025
 
 ## Abstract
-*Summarize the project in 150-200 words: the problem, approach, key results, and significance.*
 
-This project applies deep learning semantic segmentation to UAV/aerial flood imagery from the FloodNet dataset. A U-Net architecture with a pretrained ResNet34 encoder was trained to classify each pixel into 10 scene classes — including flooded and non-flooded buildings, roads, water, vehicles, and vegetation — enabling rapid, structured damage assessment for emergency responders. The final model achieved **70.70% mean IoU** (excluding background), **89.31% pixel accuracy**, and **82.33% mean Dice coefficient** on the test set of 448 images, demonstrating strong generalization from 1,445 training samples. The combined Cross-Entropy + Dice loss and cosine annealing schedule contributed to stable convergence with early stopping at epoch 24.
+After a flood, responders need to know quickly which roads and buildings are under water. This project trains a U-Net with an ImageNet-pretrained ResNet34 encoder to label every pixel of FloodNet drone images with one of 10 classes. Training used 1,445 images at 256 × 256 with a 50/50 cross-entropy and Dice loss, AdamW and cosine annealing, with early stopping on validation IoU. On the 448-image held-out test set the model reaches 70.7% mean IoU over the 9 non-background classes (66.9% over all 10) and 89.3% pixel accuracy. Large classes such as grass, trees and dry roads score above 0.80 IoU. Vehicles (0.51) and pools (0.60), each under 0.2% of pixels, are the main weakness, consistent with the original FloodNet paper. A shorter training run with less patience scored 67.6%, and the report explains why training-time validation IoU and test mIoU are not directly comparable.
 
----
+## 1. Problem
 
-## 1. Introduction
+Manual review of aerial imagery after a disaster is slow and does not scale. Semantic segmentation gives a per-pixel map that separates, for example, a flooded road from a dry one, which is what routing and rescue decisions depend on.
 
-### 1.1 Problem Statement
-After floods and natural disasters, emergency responders need rapid visibility into affected areas. Manual interpretation of aerial imagery is slow, subjective, and does not scale. Automated semantic segmentation can classify every pixel in flood imagery, enabling structured and objective damage assessment.
+## 2. Data
 
-### 1.2 Motivation
-- Time-critical decisions depend on fast, accurate damage maps
-- UAV/satellite imagery is increasingly available but requires automated processing
-- Pixel-level segmentation provides actionable granularity for resource allocation
+| Item | Value |
+| --- | --- |
+| Dataset | FloodNet, Track 1 (supervised) |
+| Split | 1,445 train / 450 validation / 448 test (official) |
+| Input size | 256 × 256 (resized from full resolution) |
+| Classes | Background, building flooded, building non-flooded, road flooded, road non-flooded, water, tree, vehicle, pool, grass |
 
-### 1.3 Objectives
-1. Build an end-to-end semantic segmentation pipeline for flood imagery
-2. Achieve competitive IoU and accuracy on the FloodNet benchmark
-3. Produce visual diagnostic outputs suitable for emergency response teams
+The classes are very imbalanced. In the test set grass covers 55.7% of pixels, trees 17.9% and water 10.7%, while vehicles cover 0.16% and pools 0.19%.
 
----
+## 3. Method
 
-## 2. Related Work
+| Component | Choice |
+| --- | --- |
+| Model | U-Net decoder (upsampling with skip connections) on a ResNet34 encoder pretrained on ImageNet; 24.4 M parameters; `segmentation-models-pytorch` |
+| Loss | 0.5 × weighted cross-entropy + 0.5 × Dice. Class weights: square root of inverse pixel frequency, scaled so the largest weight is 1, minimum 0.1 |
+| Optimisation | AdamW (lr 3e-4, weight decay 1e-4), gradient clipping at 1.0, cosine annealing to 1e-6, batch size 8 |
+| Early stopping | Patience 12 on validation IoU; best checkpoint kept |
+| Augmentation | Horizontal/vertical flips, 90° rotations, shift-scale-rotate, brightness/contrast/hue/gamma, Gaussian noise or blur |
+| Hardware | Single laptop GPU (RTX 4050) |
 
-### 2.1 Semantic Segmentation Architectures
-- **U-Net** (Ronneberger et al., 2015) — encoder-decoder with skip connections for biomedical and satellite imagery
-- **DeepLabV3+** (Chen et al., 2018) — atrous spatial pyramid pooling for multi-scale features
-- **SegFormer** (Xie et al., 2021) — transformer-based segmentation with hierarchical features
+**Metrics.** Test metrics are computed from one confusion matrix over all test pixels: IoU = TP / (TP + FP + FN) per class, averaged over classes (mIoU). The validation IoU printed during training is a different quantity: the mean over batches of the IoU of the classes present in each batch. It is used only to choose the checkpoint.
 
-### 2.2 Disaster and Remote Sensing Segmentation
-- FloodNet benchmark (Rahnemoonfar et al., 2021)
-- xBD dataset for building damage assessment
-- SpaceNet for building and road extraction from satellite imagery
+## 4. Results
 
----
+**Overall (test, 448 images)**
 
-## 3. Dataset
+| Metric | Value |
+| --- | --- |
+| mIoU, 9 classes (no background) | 70.7% |
+| mIoU, 10 classes | 66.9% |
+| Mean Dice, 9 classes | 82.3% |
+| Pixel accuracy | 89.3% |
 
-### 3.1 FloodNet Overview
-| Item | Details |
-|---|---|
-| Source | FloodNet Challenge Dataset |
-| Image type | UAV/aerial post-flood imagery |
-| Input size used | 256 × 256 |
-| Train images | 1,445 |
-| Validation images | 450 |
-| Test images | 448 |
+**Per class (test)**
 
-### 3.2 Class Distribution
-| Class | Description |
-|---|---|
-| 0 | Background |
-| 1 | Flooded building |
-| 2 | Non-flooded building |
-| 3 | Flooded road |
-| 4 | Non-flooded road |
-| 5 | Water |
-| 6 | Tree |
-| 7 | Vehicle |
-| 8 | Pool |
-| 9 | Grass |
+| Class | IoU | Dice |
+| --- | --- | --- |
+| Grass | 0.869 | 0.930 |
+| Tree | 0.811 | 0.895 |
+| Road, not flooded | 0.804 | 0.891 |
+| Building, not flooded | 0.751 | 0.858 |
+| Water | 0.726 | 0.841 |
+| Building, flooded | 0.686 | 0.814 |
+| Road, flooded | 0.608 | 0.756 |
+| Pool | 0.601 | 0.751 |
+| Vehicle | 0.508 | 0.674 |
+| Background | 0.323 | 0.488 |
 
-### 3.3 Preprocessing
-- Resized to 256×256
-- Normalized using ImageNet statistics
-- Augmentations: horizontal/vertical flips, brightness/contrast jitter, Gaussian noise
+**Reference point.** Rahnemoonfar et al. (2021) report 79.7% mIoU for PSPNet, 61.5% for DeepLabV3+ and 42.6% for ENet over the same 9 classes, trained at 713 × 713. The split and resolution differ from this project, so this is context, not a controlled comparison.
 
----
+**Training runs**
 
-## 4. Methodology
+| Run | Epoch budget / patience | Stopped | Best val IoU (training monitor) | Test mIoU (9 classes) |
+| --- | --- | --- | --- | --- |
+| A (reported) | 60 / 12 | epoch 50, best epoch 38 | 0.667 | 0.707 |
+| B | 50 / 5 | epoch 24 | 0.622 | 0.676 |
 
-### 4.1 Model Architecture
-U-Net with pretrained ResNet34 encoder (ImageNet weights). The decoder uses transposed convolutions with skip connections from corresponding encoder stages.
+Run A's validation IoU stopped improving after epoch 38 while training IoU kept rising (about 0.69 to 0.72), the usual sign of overfitting that early stopping guards against. Run B stopped much earlier and scored lower, which suggests patience 5 was too short; the runs differ in more than one setting, so this is not a controlled ablation.
 
-| Component | Value |
-|---|---|
-| Encoder | ResNet34 (pretrained) |
-| Decoder | U-Net |
-| Trainable parameters | 24,437,674 |
-| Output classes | 10 |
+## 5. Error analysis
 
-### 4.2 Training Configuration
-| Hyperparameter | Value |
-|---|---|
-| Loss function | 50% Cross-Entropy + 50% Dice Loss |
-| Optimizer | AdamW (lr=1e-3, weight_decay=1e-4) |
-| Scheduler | Cosine Annealing (T_max=50) |
-| Batch size | 8 |
-| Max epochs | 50 |
-| Early stopping | Triggered at epoch 24 |
+1. **Small objects.** Vehicle and pool are the two lowest non-background classes. At 256 × 256 a vehicle covers only a few pixels; the FloodNet paper observes the same difficulty for every model.
+2. **Flooded vs non-flooded.** Flooded roads (precision 0.65, recall 0.91) and flooded buildings (precision 0.75, recall 0.88) are over-predicted: the model tends to call structures near water "flooded". The difference between the two states is context (surrounding water), not appearance.
+3. **Similar natural textures.** The largest confusions are grass → tree, tree → grass, water → grass and grass → water, mostly along blurry boundaries between regions.
+4. **Background** (IoU 0.32) is a mixed residual class with no consistent appearance.
 
-### 4.3 Loss Function
-The combined loss addresses both pixel-level classification (Cross-Entropy) and region-level overlap (Dice), which is particularly important for imbalanced segmentation classes:
+## 6. Limitations
 
-```
-L_total = 0.5 × L_CE + 0.5 × L_Dice
-```
+- Downsampling to 256 × 256 removes the detail that small classes need.
+- One architecture and one seed: no measure of run-to-run variance and no comparison with other architectures under identical conditions.
+- No ablation of the Dice term, the class weights or the augmentations, so their individual effect is unknown.
 
----
+## 7. Next steps
 
-## 5. Results
+1. Train on 512 × 512 tiles from full-resolution images, targeting vehicles and pools.
+2. Compare DeepLabV3+ and SegFormer on the same split and metrics.
+3. Run 3 seeds per configuration and report mean ± standard deviation.
+4. Ablate the loss: cross-entropy only, Dice only, with and without class weights.
 
-### 5.1 Quantitative Results
-| Metric | Validation | Test |
-|---|---:|---:|
-| Mean IoU (no bg) | 66.71% | **70.70%** |
-| Pixel Accuracy | — | **89.31%** |
-| Mean Dice | — | **82.33%** |
+## References
 
-### 5.2 Per-Class IoU
-*Fill in from `results/metrics/` after final evaluation:*
-
-| Class | IoU | F1 / Dice |
-|---|---:|---:|
-| Flooded building | — | — |
-| Non-flooded building | — | — |
-| Flooded road | — | — |
-| Non-flooded road | — | — |
-| Water | — | — |
-| Tree | — | — |
-| Vehicle | — | — |
-| Pool | — | — |
-| Grass | — | — |
-
-### 5.3 Visual Results
-*Reference the visualizations in `results/visualizations/`:*
-- `evaluation/best_predictions.png` — highest IoU test predictions
-- `predictions/val_predictions.png` — validation overlay comparisons
-- `evaluation/per_class_metrics.png` — per-class IoU bar chart
-- `evaluation/confusion_matrix.png` — pixel-level confusion matrix
-- `training/training_curves.png` — loss and IoU over epochs
-
-### 5.4 Error Analysis
-*Describe which classes performed best/worst and hypothesize why:*
-- Vegetation and water classes are typically well-segmented due to distinct spectral signatures
-- Vehicles and pools are challenging due to small object sizes
-- Flooded vs non-flooded roads have subtle visual differences under varied lighting
-
----
-
-## 6. Discussion
-
-### 6.1 Key Findings
-1. Transfer learning from ImageNet significantly accelerates convergence on small aerial datasets
-2. Combined CE + Dice loss outperforms either loss alone for imbalanced segmentation
-3. Early stopping prevents overfitting while preserving peak validation performance
-4. Augmentation is critical for generalization on varied flood imagery conditions
-
-### 6.2 Limitations
-- Fixed 256×256 resolution may lose small object detail
-- Model has only been evaluated on FloodNet; cross-dataset generalization is untested
-- No temporal or multi-spectral data was used
-
-### 6.3 Comparison with Baselines
-*If you trained multiple architectures, compare them here:*
-
-| Model | Test mIoU | Pixel Acc | Parameters |
-|---|---:|---:|---:|
-| U-Net + ResNet34 | **70.70%** | **89.31%** | 24.4M |
-| *U-Net (baseline)* | — | — | — |
-| *DeepLabV3+* | — | — | — |
-
----
-
-## 7. Future Work
-1. Compare with DeepLabV3+, SegFormer, and Mask2Former architectures
-2. Add class-specific error analysis (confusion between flooded/non-flooded classes)
-3. Export to ONNX for faster CPU/edge inference
-4. Build a Streamlit demo for interactive flood mask prediction
-5. Explore multi-scale input or higher resolution training
-6. Test cross-dataset transfer to xBD or other disaster datasets
-
----
-
-## 8. References
-1. Ronneberger, O., Fischer, P., & Brox, T. (2015). U-Net: Convolutional Networks for Biomedical Image Segmentation.
-2. He, K., Zhang, X., Ren, S., & Sun, J. (2016). Deep Residual Learning for Image Recognition.
-3. Rahnemoonfar, M., et al. (2021). FloodNet: A High Resolution Aerial Imagery Dataset for Post Flood Scene Understanding.
-4. Chen, L.C., Zhu, Y., Papandreou, G., Schroff, F., & Adam, H. (2018). Encoder-Decoder with Atrous Separable Convolution for Semantic Image Segmentation.
-
----
-
-**Author:** Jeevan Raj M  
-**Affiliation:** B.E. Artificial Intelligence & Data Science, University of Mysore School of Engineering  
-**Date:** 2025
+1. Rahnemoonfar, M., et al. (2021). FloodNet: A High Resolution Aerial Imagery Dataset for Post Flood Scene Understanding. *IEEE Access*. [arXiv:2012.02951](https://arxiv.org/abs/2012.02951)
+2. Ronneberger, O., Fischer, P., & Brox, T. (2015). U-Net: Convolutional Networks for Biomedical Image Segmentation. *MICCAI*.
+3. He, K., Zhang, X., Ren, S., & Sun, J. (2016). Deep Residual Learning for Image Recognition. *CVPR*.

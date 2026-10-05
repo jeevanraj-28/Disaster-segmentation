@@ -3,7 +3,7 @@ FLOODNET EVALUATION — FINAL RESULTS
 
 Comparison (Validation vs Test)
    Dataset  Images  Mean IoU (no BG)  Mean IoU (all) Pixel Accuracy
-Validation     450          0.667112        0.668575              —
+Validation     450          0.667112               —              —
       Test     448          0.706961        0.668575         0.8931
 
 Summary
@@ -20,3 +20,7 @@ Recommendations:
  - Consider targeted augmentations or class-weight adjustments
    for classes with low IoU/Dice.
  - Verify label quality on high-confusion samples before retraining.
+
+Note: the validation figure is the training-time monitor (mean of per-batch IoU over
+classes present in each batch). The test figures are dataset-level IoU from one
+confusion matrix. The two are computed differently and are not directly comparable.
